@@ -1,0 +1,88 @@
+@import "mixins.scss";
+
+.qm-detector {
+  position: relative;
+  font-size: 100px;
+  width: 100px;
+  height: 100px;
+  z-index: 2;
+
+  @include transition(transform, 1s, ease-in-out, true);
+}
+
+.qm-detector:after {
+  position: relative;
+  display: block;
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: hsla(0, 0%, 0%, 0.9);
+  z-index: 1;
+
+  @include border-radius(50%);
+}
+
+.qm-detector:hover:after {
+  background: hsla(0, 0%, 0%, 0.7);
+}
+
+.qm-detector.cmy {
+  -webkit-transform: rotate(60deg);
+}
+
+.qm-detector > div {
+  position: absolute;
+  bottom: .75em;
+  left: 0.07em;
+  width: 0;
+  height: 0;
+  border: 0.433em solid transparent;
+  border-width: 0 0.433em .75em;
+  border-bottom-color: red;
+  z-index: 0;
+  
+  @include transition(border-color, 1s, ease-in-out);
+}
+
+.qm-detector .left {
+  bottom: 0;
+  left: -0.360em;
+}
+
+.qm-detector .right {
+  bottom: 0;
+  left: auto;
+  right: -0.363em;
+}
+
+/* colors */
+/* rgb */
+.qm-detector.rgb {
+  .up {
+    border-bottom-color: red;
+  }
+
+  .left {
+    border-bottom-color: green;
+  }
+
+  .right {
+    border-bottom-color: blue;
+  }
+}
+
+/* cmy */
+
+.qm-detector.cmy {
+  .up {
+    border-bottom-color: magenta;
+  }
+
+  .left {
+    border-bottom-color: yellow;
+  }
+
+  .right {
+    border-bottom-color: cyan;
+  }
+}

@@ -1,0 +1,17 @@
+@import "compass_twitter_bootstrap";
+
+@import "modules/detector.scss";
+
+#measurement {
+
+    position: relative;
+    height: 400px;
+
+    .qm-detector {
+        position: absolute;
+        margin-left: -.5em;
+        margin-top: -.5em;
+        top: 50%;
+        left: 50%;
+    }
+}
