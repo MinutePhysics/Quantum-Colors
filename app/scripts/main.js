@@ -6,7 +6,8 @@ require.config({
   paths: {
     jquery: 'vendor/jquery.min',
     dot: 'vendor/dot',
-    stapes: 'vendor/stapes'
+    stapes: 'vendor/stapes',
+    numeric: 'vendor/numeric'
   }
 });
  
