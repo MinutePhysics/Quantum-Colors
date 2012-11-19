@@ -1,18 +1,22 @@
 define(
     [
-        'modules/probability'
+        'modules/probability',
+        'modules/cxmx'
     ],
     function(
-        Probability
+        Probability,
+        CMatrix
     ){
         'use strict';
         
+        var PRECISION = 6;
+
         /*
         State vector (or ray if you like)
          */
         function State(amps){
             
-            this.amps = amps;
+            this.amps = CMatrix.create(amps);
             this.normalize();
         }
 
@@ -22,37 +26,32 @@ define(
                 
                 var amps = this.amps
                     ,sum = 0
-                    ,l = amps.length
+                    ,l = amps.rows()
                     ,i
                     ;
 
-                for (i = 0; i < l; i++) {
+                for (i = 1; i <= l; i++) {
 
-                    sum += this.getProbabilityByIndex(i)
+                    sum += amps.e(i).magsqr();
                 }
 
                 if (sum === 1) return;
 
-                for (i = 0; i < l; i++) {
-                    
-                    amps[i] /= Math.sqrt(sum);
-                }
+                this.amps = amps.multiply(Math.sqrt(1/sum));
             },
 
             getProbabilityByIndex: function(idx){
 
-                var val = this.amps[idx];
-
-                return val * val;
+                return this.amps.e(idx + 1).magsqr();
             },
 
             getProbabilityArray: function(){
 
                 var probs = [];
 
-                for ( var i = 0, l = this.amps.length; i < l; ++i ){
+                for ( var i = 0, l = this.amps.rows(); i < l; i++ ){
                     
-                    probs.push(this.getProbabilityByIndex(i));
+                    probs.push(this.getProbabilityByIndex(i).toPrecision(PRECISION));
                 }
 
                 return probs;
@@ -68,7 +67,7 @@ define(
                 for (var i = 0; i < len; i++) amps[i] = 0;
                 
                 amps[idx] = 1;
-                this.amps = amps;
+                this.amps = CMatrix.create(amps);
 
                 return this;
             },
@@ -102,6 +101,12 @@ define(
         }
 
         return {
+
+            setPrecision: function(p){
+
+                PRECISION = p;
+                CMatrix.precision = Math.pow(10, -p);
+            },
 
             state: function(amps){
 
