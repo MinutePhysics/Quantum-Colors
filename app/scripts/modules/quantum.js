@@ -1,38 +1,17 @@
 define(
     [
+        'modules/probability'
     ],
     function(
+        Probability
     ){
         'use strict';
         
-        function getRandomIndex(amps){
-            
-            var rand = Math.random()
-                ,size = 0
-                ,len = amps.length
-                ,ampsqr = []
-                ,val
-                ;
-            
-            // iterate through state amplitudes and sum the squares
-            // and cache the square value for the next iteration
-            while (len--) size += (val = amps[len]) * (ampsqr[len] = val);
-
-            rand *= size;
-            val = 0;
-            
-            // chose an index based on square amplitudes
-            do {
-                
-                rand -= ampsqr[val++];
-
-            } while (rand > 0);
-            
-            return val - 1;
-        }
-
+        /*
+        State vector (or ray if you like)
+         */
         function State(amps){
-                
+            
             this.amps = amps;
             this.normalize();
         }
@@ -43,39 +22,84 @@ define(
                 
                 var amps = this.amps
                     ,sum = 0
-                    ,val
                     ,l = amps.length
                     ,i
                     ;
 
                 for (i = 0; i < l; i++) {
 
-                    sum += (val = amps[i]) * val;
+                    sum += this.getProbabilityByIndex(i)
                 }
 
                 if (sum === 1) return;
 
                 for (i = 0; i < l; i++) {
                     
-                    amps[i] /= sum;
+                    amps[i] /= Math.sqrt(sum);
                 }
             },
 
-            measure: function(){
+            getProbabilityByIndex: function(idx){
 
-                var idx = getRandomIndex(this.amps)
+                var val = this.amps[idx];
+
+                return val * val;
+            },
+
+            getProbabilityArray: function(){
+
+                var probs = [];
+
+                for ( var i = 0, l = this.amps.length; i < l; ++i ){
+                    
+                    probs.push(this.getProbabilityByIndex(i));
+                }
+
+                return probs;
+            },
+
+            collapseTo: function(idx){
+
+                var amps = []
                     ,len = this.amps.length
-                    ,amps = []
                     ;
-                
+
                 // collapse
                 for (var i = 0; i < len; i++) amps[i] = 0;
                 
                 amps[idx] = 1;
                 this.amps = amps;
+
+                return this;
+            },
+
+            measure: function(){
+
+                var chooser = Probability(this.getProbabilityArray())
+                    ,idx = chooser().idx
+                    ;
+                
+                this.collapseTo(idx);
+                
                 return idx;
             }
         };
+
+        /*
+        Operators
+         */
+        function Operator(vals){
+
+            var sqrt = Math.sqrt(vals.length);
+
+            // if not an integer
+            if (sqrt != ~~sqrt){
+
+                throw "Not a square matrix!";
+            }
+
+            this.matrix = vals;
+        }
 
         return {
 
