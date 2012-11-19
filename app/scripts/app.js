@@ -14,7 +14,7 @@ define(
 
         $(function(){
 
-            console.log(window.qm=quantum.state([1,1]));
+            console.log(window.qm=quantum.state(['i','-i']));
 
             var detector = $(tplDetector.render()).appendTo('#measurement');
 

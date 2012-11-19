@@ -60,7 +60,7 @@ define(
             collapseTo: function(idx){
 
                 var amps = []
-                    ,len = this.amps.length
+                    ,len = this.amps.rows()
                     ;
 
                 // collapse
